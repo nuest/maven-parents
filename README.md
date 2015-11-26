@@ -3,26 +3,13 @@
 ## Usage
 
 To apply the 52°North parent pom in your project, add the following to your project's `pom.xml` file.
+
 ```xml
 <parent>
     <groupId>org.n52</groupId>
     <artifactId>parent</artifactId>
-    <version>1-SNAPSHOT</version>
+    <version>2</version>
 </parent>
-
-<!-- TODO remove this once org.n52:parent is released -->
-<repositories>
-    <repository>
-        <id>sonatype-nexus-snapshots</id>
-        <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        <snapshots>
-            <enabled>true</enabled>
-        </snapshots>
-        <releases>
-            <enabled>false</enabled>
-        </releases>
-    </repository>
-</repositories>
 ```
 
 ### Define additional repositories in your pom file
@@ -119,7 +106,27 @@ mvn deploy
 ```
 
 ### Release
+
+First switch to a special branch to prepare the release. Afterward you can merge this into the master or develop branch.
+
+```sh
+git checkout -b release-prepare
+```
+
+Now start the release process with
+
 ```sh
 mvn release:prepare
 mvn release:perform -P sign
 ```
+
+The `release` commands are interactive and allow you to set the release version and next development version.
+
+After performing the release on the command line, log in to Sonatype Nexus at https://oss.sonatype.org/ and complete the following steps:
+
+* Locate the project in the the staging repository: https://oss.sonatype.org/#stagingRepositories
+* Check it contains the required files (pom, asc, sources, javadoc, ...)
+* "Close" the staging repository
+* Click on "release"
+* Wait... then refresh - the staging repo should be gone.
+* Check after a short delay for the published modules at http://repo1.maven.org/maven2/org/n52/parent/
